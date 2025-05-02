@@ -8,7 +8,7 @@
     xmlns:vm="using:FileClipper.UI.ViewModels"
     Title="FileClipper.UI"
     Width="600"
-    Height="340"
+    Height="550"
     Icon="/Assets/avalonia-logo.ico"
     mc:Ignorable="d"
 	>
