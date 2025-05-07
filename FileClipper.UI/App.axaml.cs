@@ -50,7 +50,8 @@ public partial class App : Application
     }
     private void ConfigureServices(IServiceCollection services)
     {
-        services.AddSingleton<IFileService, FileService>();
+        services.AddTransient<IFileService, FileService>();
         services.AddSingleton<MainViewModel>();
+        services.AddSingleton<IFilesSystem, FilesSystem>(); 
     }
 }

@@ -17,12 +17,7 @@
 
 ## 🖼️ UI Overview
 
-> ⚠️ No screenshots available in repo yet — consider adding visuals for better onboarding.
-
-* Folder browser
-* File extension filter
-* Clipboard export
-* Status updates
+![screenshot](./doc/img/screenshot.png)
 
 ---
 
@@ -32,6 +27,7 @@
 * [Avalonia UI](https://avaloniaui.net/)
 * [CommunityToolkit.Mvvm](https://learn.microsoft.com/en-us/dotnet/communitytoolkit/mvvm/)
 * Dependency Injection via `Microsoft.Extensions.DependencyInjection`
+* [xUnit](https://xunit.net/) and [NSubstitute](https://nsubstitute.github.io/) for unit tests.
 
 ---
 
@@ -58,8 +54,13 @@
 
    ```txt
    ====== Start of SomeFile.cs ======
-   Full path : C:\Path\To\SomeFile.cs
+   File path : C:\Path\To\SomeFile.cs
+   File size : 1000 bytes
+   Last Modified: 01/01/2000 00:00:00
+   File content:
+
    (file contents here)
+
    ====== End of SomeFile.cs ======
    ```
 
@@ -108,14 +109,12 @@ Currently, no unit tests are defined. Recommended to add:
 
 ## 📌 Future Improvements
 
-* ✅ Add unit tests
 * ✅ Add dark/light themes
-* 🚀 Export to file (in addition to clipboard)
-* 🧩 Drag & drop support
 * 💾 Save user preferences (e.g., last folder)
+* 🧩 Drag & drop support
 
 ---
 
 ## 📃 License
 
-MIT (or specify license here)
+MIT

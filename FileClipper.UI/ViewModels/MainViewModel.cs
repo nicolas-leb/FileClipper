@@ -51,7 +51,7 @@ public partial class MainViewModel : ViewModelBase
         // Refresh extensions list when the include subdirectories option changes
         if (!string.IsNullOrWhiteSpace(DirectoryToScanPath) && Directory.Exists(DirectoryToScanPath))
         {
-            RefreshExtensionsCommand.ExecuteAsync(null);
+            RefreshExtensionsCommand.Execute(null);
         }
     }
 
@@ -81,7 +81,7 @@ public partial class MainViewModel : ViewModelBase
             if (folderDialog != null && folderDialog.Count > 0)
             {
                 DirectoryToScanPath = folderDialog[0].Path.LocalPath;
-                await RefreshExtensionsCommand.ExecuteAsync(null);
+                RefreshExtensionsCommand.Execute(null);
             }
         }
         catch (Exception ex)
@@ -91,7 +91,7 @@ public partial class MainViewModel : ViewModelBase
     }
 
     [RelayCommand]
-    private async Task RefreshExtensions()
+    private void RefreshExtensions()
     {
         try
         {
@@ -122,12 +122,6 @@ public partial class MainViewModel : ViewModelBase
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(DirectoryToScanPath) || !Directory.Exists(DirectoryToScanPath))
-            {
-                StatusMessage = "Please select a valid directory.";
-                return;
-            }
-
             var files = _fileService.GetFilesInDirectory(DirectoryToScanPath, SelectedExtensions, IncludeSubdirectories);
 
             if (files.Count == 0)
@@ -161,80 +155,5 @@ public partial class MainViewModel : ViewModelBase
             return desktop.MainWindow;
         }
         return null;
-    }
-
-    private void CopyFilesToClipboard(List<string> files)
-    {
-        var sb = new StringBuilder();
-        foreach (var filePath in files)
-        {
-            var fileName = Path.GetFileName(filePath);
-            sb.AppendLine($"====== Start of {fileName} ======");
-            sb.AppendLine($"Full path : {filePath}");
-            var fileContent = File.ReadAllText(filePath);
-            sb.AppendLine(fileContent);
-            sb.AppendLine($"====== End of {fileName} ======");
-            sb.AppendLine();
-        }
-
-        try
-        {
-            // Use Avalonia's clipboard service
-            var clipboard = GetTopLevel()?.Clipboard;
-            if (clipboard != null)
-            {
-                clipboard.SetTextAsync(sb.ToString());
-                return;
-            }
-            
-            StatusMessage = "Could not access clipboard.";
-        }
-        catch (Exception ex)
-        {
-            StatusMessage = $"Error copying to clipboard: {ex.Message}";
-        }
-    }
-
-    public List<string> GetFilesInDirectory(string folderPath, IEnumerable<string> selectedExtensions, bool includeSubdirectories)
-    {
-        if (!Directory.Exists(folderPath))
-            throw new DirectoryNotFoundException($"The specified folder does not exist: {folderPath}");
-
-        SearchOption searchOption = includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-
-        // Convert to list for better performance in multiple operations
-        var extensionsList = selectedExtensions.ToList();
-        
-        var files = Directory.GetFiles(folderPath, "*.*", searchOption)
-            .Where(file => 
-            {
-                // If no extensions selected, include all files
-                if (extensionsList.Count == 0)
-                    return true;
-                
-                var fileExt = Path.GetExtension(file)?.ToLower();
-                return !string.IsNullOrEmpty(fileExt) && extensionsList.Contains(fileExt);
-            })
-            .ToList();
-
-        return files;
-    }
-
-    public List<string> GetFilesExtensionInDirectory(string folderPath, bool includeSubdirectories)
-    {
-        if (!Directory.Exists(folderPath))
-            throw new DirectoryNotFoundException($"The specified folder does not exist: {folderPath}");
-
-        SearchOption searchOption = includeSubdirectories ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly;
-
-        var files = Directory.GetFiles(folderPath, "*.*", searchOption).ToList();
-
-        var extensions = files
-            .Select(file => Path.GetExtension(file)?.ToLower())
-            .Where(ext => !string.IsNullOrEmpty(ext))
-            .Distinct()
-            .ToList();
-
-        return extensions!;
     }
 }
